@@ -20,6 +20,7 @@ interface Task {
   description: string;
   isDone: boolean;
   dueDate: Date | null;
+  dueTime?: Date | null;
 }
 
 export default function HomePage() {
@@ -76,7 +77,11 @@ export default function HomePage() {
   // Toggle done
   const toggleDoneTask = (taskId: string) => {
     setTasks((prev) =>
-      prev.map((t) => (t.id === taskId ? { ...t, isDone: !t.isDone } : t))
+      prev.map((t) =>
+        t.id === taskId
+          ? { ...t, isDone: !t.isDone, dueTime: !t.isDone ? new Date() : null }
+          : t
+      )
     );
   };
 
@@ -112,31 +117,29 @@ export default function HomePage() {
                     </Text>
                   )}
                   {/* แสดง Date & Time */}
-                  <Text size="xs" c="gray">
-                    Done at:
-                  </Text>
+
+                  {task.isDone && task.dueTime && (
+                    <Text size="xs" c="thanabat">
+                      Done at:
+                      {task.dueTime.toLocaleString()}
+                    </Text>
+                  )}
                 </Stack>
                 {/* แสดง Button Done & Button Delete */}
                 <Group>
-                  <Button
-                    style={{
-                      backgroundColor: "#71c32fda",
-                      color: "#dce6e7ff",
-                    }}
-                    variant="light"
-                    size="xs"
+                  <Checkbox
                     onClick={() => toggleDoneTask(task.id)}
-                  >
-                    Done
-                  </Button>
-                  <Button
-                    color="chanadda"
+                    defaultChecked={task.isDone}
+                    label="Done"
+                  />
+                  <ActionIcon
                     variant="light"
-                    size="xs"
+                    aria-label="Settings"
+                    color="red"
                     onClick={() => deleteTask(task.id)}
                   >
-                    Delete
-                  </Button>
+                    <IconTrash />
+                  </ActionIcon>
                 </Group>
               </Group>
             </Card>
